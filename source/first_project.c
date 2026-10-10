@@ -34,8 +34,8 @@ int main()
 
     // Draw the smile (semi-circle)
     circleCenterX = 120;
-    circleCenterY = 100;
-    circleRadius = 30;
+    circleCenterY = 80;
+    circleRadius = 40;
 
     drawCircle(circleCenterX, circleCenterY, circleRadius, true);
 

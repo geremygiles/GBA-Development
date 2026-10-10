@@ -50,19 +50,17 @@ inline void drawCircle(int cx, int cy, int r, bool semi) {
     while (x >= y) {
         // Top half of circle
         if (semi == false) {
-            drawPixel((cx - y), (cy + x), LIGHT_BLUE); 
-            drawPixel((cx - x), (cy + y), LIGHT_BLUE); 
-            drawPixel((cx + x), (cy + y), LIGHT_BLUE); 
-            drawPixel((cx + y), (cy + x), LIGHT_BLUE); 
+            drawPixel((cx + y), (cy - x), LIGHT_BLUE); 
+            drawPixel((cx + x), (cy - y), LIGHT_BLUE); 
+            drawPixel((cx - x), (cy - y), LIGHT_BLUE); 
+            drawPixel((cx - y), (cy - x), LIGHT_BLUE); 
         }
 
         // Bottom half of circle
-        drawPixel((cx + y), (cy - x), LIGHT_BLUE); 
-        drawPixel((cx + x), (cy - y), LIGHT_BLUE); 
-        drawPixel((cx - x), (cy - y), LIGHT_BLUE); 
-        drawPixel((cx - y), (cy - x), LIGHT_BLUE); 
-        
-        
+        drawPixel((cx - y), (cy + x), LIGHT_BLUE); 
+        drawPixel((cx - x), (cy + y), LIGHT_BLUE); 
+        drawPixel((cx + x), (cy + y), LIGHT_BLUE); 
+        drawPixel((cx + y), (cy + x), LIGHT_BLUE); 
 
         y++;
         if (error < 0) {
