@@ -1,5 +1,5 @@
 /*
-First project for the GBA, practicing creating a simple image on the GBA.
+Template project
 Geremy Giles
 10/9/2026
 */
