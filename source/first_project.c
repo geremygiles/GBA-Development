@@ -12,11 +12,13 @@ int main()
     REG_DISPCNT = DCNT_MODE3 | DCNT_BG2; // The OR bitwise operator combines 0x0003 and 0x0400 into 0x0403
 
     // Show the image
-    vram_mem[120 + 80*240] = LIGHT_BLUE; // Write the light blue color to the pixel at 120, 80
-    vram_mem[120 + 81*240] = LIGHT_BLUE;
-    vram_mem[120 + 82*240] = LIGHT_BLUE;
-    vram_mem[120 + 83*240] = LIGHT_BLUE;
-    vram_mem[120 + 84*240] = LIGHT_BLUE;
+    
+
+    for (u32 yIndex = 160; yIndex >= 0; yIndex--) {
+        for (u32 xIndex = 240; xIndex >= 0; xIndex--) {
+            vram_mem[xIndex + yIndex*240] = LIGHT_BLUE; // Write the light blue color to the pixel at 120, 80
+        }
+    }
 
     while (1);
 
