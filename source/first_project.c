@@ -5,20 +5,40 @@ Geremy Giles
 */
 
 #include "toolkit.h"
+#include <math.h>
 
 int main()
 {
     // Set the display to Video Mode 3 for simple rendering, with background 2
-    REG_DISPCNT = DCNT_MODE3 | DCNT_BG2; // The OR bitwise operator combines 0x0003 and 0x0400 into 0x0403
+    REG_DISPCNT = DCNT_MODE3 | DCNT_BG2; // The OR bitwise operator combines 0cx003 and 0cx400 into 0cx403
 
-    // Show the image
+    // Image data
+    u32 eyeLength = 25;
+    u32 leftEyeXCoord = 95;
+    u32 eyeYCoord = 35;
+    u32 rightEyeXCoord = 145;
     
+    // Draw the eyes
+    for (u32 yPos = eyeYCoord; yPos < eyeYCoord + eyeLength; yPos++) {
+        drawPixel(leftEyeXCoord, yPos, LIGHT_BLUE);
+        drawPixel(rightEyeXCoord, yPos, LIGHT_BLUE);
+    } 
 
-    for (u32 yIndex = 160; yIndex >= 0; yIndex--) {
-        for (u32 xIndex = 240; xIndex >= 0; xIndex--) {
-            vram_mem[xIndex + yIndex*240] = LIGHT_BLUE; // Write the light blue color to the pixel at 120, 80
-        }
-    }
+
+    // Draw the head (circle)
+    int circleCenterX = 120;
+    int circleCenterY = 80;
+    int circleRadius = 70;
+
+    drawCircle(circleCenterX, circleCenterY, circleRadius, false);
+
+    // Draw the smile (semi-circle)
+    circleCenterX = 120;
+    circleCenterY = 100;
+    circleRadius = 30;
+
+    drawCircle(circleCenterX, circleCenterY, circleRadius, true);
+
 
     while (1);
 

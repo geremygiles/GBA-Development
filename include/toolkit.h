@@ -8,6 +8,8 @@ Geremy Giles
 #ifndef TOOLKIT_H
 #define TOOLKIT_H
 
+#include <stdbool.h>
+
 // Typedefs
 typedef unsigned int u32;
 typedef unsigned short u16;
@@ -33,5 +35,44 @@ typedef unsigned short u16;
 
 // Define the hex for a light blue
 #define LIGHT_BLUE 0x7F6E
+
+// Draw a pixel to the screen
+inline void drawPixel(int x, int y, u32 color) {
+    vram_mem[x + y*240] = color;
+}
+
+// Create a circle algorithm (Bresenham's Midpoint Circle Algorithm)
+inline void drawCircle(int cx, int cy, int r, bool semi) {
+    int x = r;
+    int y = 0;
+    int error = 1 - r;
+
+    while (x >= y) {
+        // Top half of circle
+        if (semi == false) {
+            drawPixel((cx - y), (cy + x), LIGHT_BLUE); 
+            drawPixel((cx - x), (cy + y), LIGHT_BLUE); 
+            drawPixel((cx + x), (cy + y), LIGHT_BLUE); 
+            drawPixel((cx + y), (cy + x), LIGHT_BLUE); 
+        }
+
+        // Bottom half of circle
+        drawPixel((cx + y), (cy - x), LIGHT_BLUE); 
+        drawPixel((cx + x), (cy - y), LIGHT_BLUE); 
+        drawPixel((cx - x), (cy - y), LIGHT_BLUE); 
+        drawPixel((cx - y), (cy - x), LIGHT_BLUE); 
+        
+        
+
+        y++;
+        if (error < 0) {
+            error += 2 * y + 1;
+        } else {
+            x--;
+            error += 2 * (y - x) + 1;
+        }
+    }
+
+}
 
 #endif
