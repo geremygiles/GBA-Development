@@ -41,7 +41,7 @@ inline void drawPixel(int x, int y, u32 color) {
     vram_mem[x + y*240] = color;
 }
 
-// Create a circle algorithm (Bresenham's Midpoint Circle Algorithm)
+// Create a circle algorithm (Bresenhamm's Midpoint Circle Algorithm)
 inline void drawCircle(int cx, int cy, int r, bool semi) {
     int x = r;
     int y = 0;
