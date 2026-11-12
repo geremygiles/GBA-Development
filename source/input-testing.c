@@ -21,8 +21,9 @@ int main()
         
         readInput();
 
-        if (key_down(KEY_A)) { fillScreen(RED); }
+        if (key_down(KEY_A)) { drawSmile(RED); }
         else if (key_down(KEY_B)) { fillScreen(BLUE); }
+        else if (key_down(KEY_START)) { fillScreen(ORANGE); }
     }
 
     return 0;
