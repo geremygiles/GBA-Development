@@ -1,7 +1,7 @@
 /*
 The defines and inline functions needed for developing on the GBA.
 Geremy Giles
-Rev 11/11/2026
+Rev 11/15/2026
 */
 
 // Check if already defined
@@ -15,7 +15,7 @@ typedef unsigned int u32;
 typedef volatile unsigned int vu32; // needs to be read at each call
 typedef unsigned short u16;
 typedef volatile unsigned short vu16; // needs to be read at each call
-
+typedef short s16;
 // Define the addresses for the VRAM and IO Registers
 #define MEM_VRAM     0x06000000
 #define MEM_IO       0x04000000
@@ -37,12 +37,13 @@ typedef volatile unsigned short vu16; // needs to be read at each call
 // Masked to 16-bit with KEY_MASK in readInput
 #define REG_KEYINPUT *((vu32*)(MEM_IO+0x0130))
 
-// Define the value for video mode 3
+// Define the hex value for video mode 3
 #define DCNT_MODE3 0x0003
-
-// Define the value for background 2
+// Define the hex value for background 2
 #define DCNT_BG2   0x0400
 
+
+ 
 // Define the hex values for 10 different colors
 #define RED     0x001F
 #define ORANGE  0x013F
