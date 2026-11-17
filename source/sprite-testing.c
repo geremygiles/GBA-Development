@@ -18,7 +18,8 @@ OBJ_ATTR obj_buffer[128];
 int main()
 {
     // Set the display to Mode 0 for simple tiles, with background 0
-    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0; 
+    //REG_DISPCNT = DCNT_MODE0 | DCNT_BG0; 
+    REG_DISPCNT = DCNT_OBJ | DCNT_1D;
 
     // Copy the sprite into the tile memory
     memcpy(&tile_mem[4][0], smiley_halfTiles, smiley_halfTilesLen);
