@@ -8,6 +8,7 @@ Geremy Giles
 #include "toolkit.h"
 #include "tile_rendering.h"
 #include "smiley_half.h"
+#include "eyeball.h"
 
 // Input data
 //u32 __key_curr, __key_prev = 0;
@@ -18,8 +19,11 @@ OBJ_ATTR obj_buffer[128];
 int main()
 {
     // Set the display to Mode 0 for simple tiles, with background 0
-    //REG_DISPCNT = DCNT_MODE0 | DCNT_BG0; 
+    //REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
+    // Enable objects and set the mapping mode to 1D 
     REG_DISPCNT = DCNT_OBJ | DCNT_1D;
+
+    #pragma region Smiley Face
 
     // Copy the sprite into the tile memory
     memcpy(&tile_mem[4][0], smiley_halfTiles, smiley_halfTilesLen);
@@ -42,6 +46,8 @@ int main()
     myObj->attr2 |= (tileID | paletteID);
 
     oam_copy(oam_mem, myObj, 1);
+
+    #pragma endregion
 
     // Game loop
     while (1) 

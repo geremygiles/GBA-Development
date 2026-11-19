@@ -4,11 +4,11 @@
 //======================================================================
 //
 //	eyeball, 16x16@4, 
-//	+ palette 111 entries, not compressed
+//	+ palette 16 entries, not compressed
 //	+ 4 tiles not compressed
-//	Total size: 222 + 128 = 350
+//	Total size: 32 + 128 = 160
 //
-//	Time-stamp: 2026-11-16, 14:52:33
+//	Time-stamp: 2026-11-17, 09:30:20
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.3
 //	( http://www.coranac.com/projects/#grit )
 //
@@ -20,8 +20,8 @@
 #define eyeballTilesLen 128
 extern const unsigned short eyeballTiles[64];
 
-#define eyeballPalLen 222
-extern const unsigned short eyeballPal[112];
+#define eyeballPalLen 32
+extern const unsigned short eyeballPal[16];
 
 #endif // GRIT_EYEBALL_H
 
