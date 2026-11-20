@@ -73,6 +73,13 @@ int main()
         if (key_held(KEY_UP)) { playerY -= (1 * playerMoveSpeed); }
         else if (key_held(KEY_DOWN)) { playerY += (1 * playerMoveSpeed); }
 
+        // clamp the positions before applying to object
+        if (playerX > 240) playerX = -8;
+        else if (playerX < -8) playerX = 240;
+
+        if (playerY > 160) playerY = -8;
+        else if (playerY < -8) playerY = 160;
+
         // Update the players Y and X with attr0 and attr1, respectively
         myObj->attr0 = (myObj->attr0 & ~YPOS_MASK) | (playerY & YPOS_MASK);
         myObj->attr1 = (myObj->attr1 & ~XPOS_MASK) | (playerX & XPOS_MASK);
