@@ -44,7 +44,7 @@ int main()
     u32 tileID = 0, paletteID = 0;
 
     // Set the starting position for the sprite
-    u32 playerX = 0, playerY = 0;
+    int playerX = 0, playerY = 0;
 
     
     myObj->attr0 = ATTR0_SQUARE; // Set Attribute 0: Y-coord, gfx, and shape
