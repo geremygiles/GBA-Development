@@ -11,7 +11,10 @@ Geremy Giles
 #include "eyeball.h"
 
 // Input data
-//u32 __key_curr, __key_prev = 0;
+u32 __key_curr, __key_prev = 0;
+
+// Player speed 
+const u32 playerMoveSpeed = 1;
 
 // Create the double buffer for the OAM
 OBJ_ATTR obj_buffer[128];
@@ -40,25 +43,42 @@ int main()
     // Set tile ID and palette ID
     u32 tileID = 0, paletteID = 0;
 
-    // Set Attribute 0: Y-coord, gfx, and shape
-    myObj->attr0 |= ATTR0_SQUARE;
-    myObj->attr1 |= ATTR1_SIZE_8;
-    myObj->attr2 |= (tileID | paletteID);
+    // Set the starting position for the sprite
+    u32 playerX = 0, playerY = 0;
 
-    oam_copy(oam_mem, myObj, 1);
+    
+    myObj->attr0 = ATTR0_SQUARE; // Set Attribute 0: Y-coord, gfx, and shape
+    myObj->attr1 = ATTR1_SIZE_8; // Set Attribute 1: X-coord, size, and flipping
+    myObj->attr2 = (tileID | paletteID); // Set attribute 2: Tile ID, Z Order, and color palette
+
+    // Copy everything to OAM, so that all objects are initialized to hide
+    oam_copy(oam_mem, obj_buffer, 128);
 
     #pragma endregion
 
     // Game loop
     while (1) 
     {
-        //vsync();
+        vsync();
         
-        //readInput();
+        readInput();
 
-        //if (key_down(KEY_A)) { drawSmile(RED); }
-        //else if (key_down(KEY_B)) { fillScreen(BLUE); }
-        //else if (key_down(KEY_START)) { fillScreen(ORANGE); }
+        if (key_down(KEY_A)) { myObj->attr0 = ATTR0_HIDE; }
+
+        // Update X position
+        if (key_held(KEY_RIGHT)) { playerX += 1; }
+        else if (key_held(KEY_LEFT)) { playerX -= (1 * playerMoveSpeed); }
+        
+        // Update Y position
+        if (key_held(KEY_UP)) { playerY -= (1 * playerMoveSpeed); }
+        else if (key_held(KEY_DOWN)) { playerY += (1 * playerMoveSpeed); }
+
+        // Update the players Y and X with attr0 and attr1, respectively
+        myObj->attr0 = (myObj->attr0 & ~YPOS_MASK) | (playerY & YPOS_MASK);
+        myObj->attr1 = (myObj->attr1 & ~XPOS_MASK) | (playerX & XPOS_MASK);
+    
+        // Copy to OAM
+        oam_copy(oam_mem, obj_buffer, 1);
     }
 
     return 0;

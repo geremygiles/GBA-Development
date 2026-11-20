@@ -5,7 +5,7 @@
 //
 //	smiley_half, 8x8@4, 
 //	+ palette 16 entries, not compressed
-//	+ 1 tiles not compressed
+//	+ 1 tiles not compressecad
 //	Total size: 32 + 32 = 64
 //
 //	Time-stamp: 2026-11-15, 18:42:05

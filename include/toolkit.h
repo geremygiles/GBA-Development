@@ -85,6 +85,10 @@ inline void vsync() {
 // Define the mask used to get the keys from the 32 bit register
 #define KEY_MASK 0x03FF
 
+// Define the mask for the Y position
+#define YPOS_MASK 0x00FF
+#define XPOS_MASK 0x01FF
+
 // Create an enum with all the key indexes
 enum eKeyIndex 
 {
@@ -108,6 +112,12 @@ inline void readInput()
 inline u32 key_down(u32 keyMask) 
 {
     return (__key_curr & ~__key_prev) & keyMask;
+}
+
+// Check if the key is held, regardless of previous state
+inline u32 key_held(u32 keyMask)
+{
+    return __key_curr & keyMask;
 }
 
 
