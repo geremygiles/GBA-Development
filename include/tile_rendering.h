@@ -69,6 +69,7 @@ void oam_copy(OBJ_ATTR *dst, const OBJ_ATTR *src, u32 count);
 // Flipping
 
 // Sprite size
-#define ATTR1_SIZE_8 0x0000
+#define ATTR1_SIZE_8  0x0000
+#define ATTR1_SIZE_16 0x4000
 
 #endif

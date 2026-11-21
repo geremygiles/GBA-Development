@@ -7,14 +7,16 @@ Geremy Giles
 #include <string.h>
 #include "toolkit.h"
 #include "tile_rendering.h"
-#include "smiley_half.h"
-#include "eyeball.h"
+#include "smiley16.h"
 
 // Input data
 u32 __key_curr, __key_prev = 0;
 
 // Player speed 
 const u32 playerMoveSpeed = 1;
+
+// Player size
+const u16 playerSize = 16;
 
 // Create the double buffer for the OAM
 OBJ_ATTR obj_buffer[128];
@@ -29,10 +31,10 @@ int main()
     #pragma region Smiley Face
 
     // Copy the sprite into the tile memory
-    memcpy(&tile_mem[4][0], smiley_halfTiles, smiley_halfTilesLen);
+    memcpy(&tile_mem[4][0], smiley16Tiles, smiley16TilesLen);
 
     // Copy the palette into the palbank
-    memcpy(obj_pal_mem, smiley_halfPal, smiley_halfPalLen);
+    memcpy(obj_pal_mem, smiley16Pal, smiley16PalLen);
 
     // Initialize all sprites
     oam_init(obj_buffer, 128);
@@ -48,7 +50,7 @@ int main()
 
     
     myObj->attr0 = ATTR0_SQUARE; // Set Attribute 0: Y-coord, gfx, and shape
-    myObj->attr1 = ATTR1_SIZE_8; // Set Attribute 1: X-coord, size, and flipping
+    myObj->attr1 = ATTR1_SIZE_16; // Set Attribute 1: X-coord, size, and flipping
     myObj->attr2 = (tileID | paletteID); // Set attribute 2: Tile ID, Z Order, and color palette
 
     // Copy everything to OAM, so that all objects are initialized to hide
@@ -66,7 +68,7 @@ int main()
         if (key_down(KEY_A)) { myObj->attr0 = ATTR0_HIDE; }
 
         // Update X position
-        if (key_held(KEY_RIGHT)) { playerX += 1; }
+        if (key_held(KEY_RIGHT)) { playerX += (1 * playerMoveSpeed); }
         else if (key_held(KEY_LEFT)) { playerX -= (1 * playerMoveSpeed); }
         
         // Update Y position
@@ -74,11 +76,11 @@ int main()
         else if (key_held(KEY_DOWN)) { playerY += (1 * playerMoveSpeed); }
 
         // clamp the positions before applying to object
-        if (playerX > 240) playerX = -8;
-        else if (playerX < -8) playerX = 240;
+        if (playerX > 240) playerX = -playerSize;
+        else if (playerX < -playerSize) playerX = 240;
 
-        if (playerY > 160) playerY = -8;
-        else if (playerY < -8) playerY = 160;
+        if (playerY > 160) playerY = -playerSize;
+        else if (playerY < -playerSize) playerY = 160;
 
         // Update the players Y and X with attr0 and attr1, respectively
         myObj->attr0 = (myObj->attr0 & ~YPOS_MASK) | (playerY & YPOS_MASK);
