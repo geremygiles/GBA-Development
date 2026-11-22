@@ -4,6 +4,8 @@ Geremy Giles
 11/15/2026
 */
 
+#include "game.h"
+
 #include <string.h>
 #include "toolkit.h"
 
@@ -13,14 +15,11 @@ Geremy Giles
 #include "levels.h"
 #include "level_loading.h"
 
+#include "player_movement.h"
+
+
 // Input data
 u32 __key_curr, __key_prev = 0;
-
-// Player speed 
-const u32 playerMoveSpeed = 1;
-
-// Player size
-const u16 playerSize = 16;
 
 // Create the double buffer for the OAM
 OBJ_ATTR obj_buffer[128];
@@ -65,20 +64,7 @@ int main()
     #pragma region Level Loading
 
     // Copy the sprite data and palettes into VRAM
-
-    // normal ground
-    memcpy(&tile_mem[4][3*4], groundTiles, groundTilesLen);
-    memcpy(obj_pal_mem, groundPal, groundPalLen);
-
-    // walls
-    memcpy(&tile_mem[4][7*4], wallStandardTiles, wallStandardTilesLen);
-    //memcpy(obj_pal_mem[7], groundPal, groundPalLen);
-    
-    // player
-    memcpy(&tile_mem[4][8*4], playerTiles, playerTilesLen);
-
-    // door
-    memcpy(&tile_mem[4][9*4], doorTiles, doorTilesLen);
+    CopySpriteData();
 
     // Initialize all sprites
     oam_init(obj_buffer, 128);
@@ -89,10 +75,7 @@ int main()
     // Load the first level
     LoadLevel(level0, obj_buffer, player);
 
-    // Get updated player x & y coord
-    
-    int playerY = player->attr0 & YPOS_MASK;
-    int playerX = player->attr1 & XPOS_MASK;
+    GetPlayerStartPos(player);
 
     // Copy buffer to OAM
     oam_copy(oam_mem, obj_buffer, 128);
@@ -106,30 +89,32 @@ int main()
         
         readInput();
 
-        if (key_down(KEY_A)) { player->attr0 = ATTR0_HIDE; }
+        // if (key_down(KEY_A)) { player->attr0 = ATTR0_HIDE; }
 
-        // Update X position
-        if (key_held(KEY_RIGHT)) { playerX += (1 * playerMoveSpeed); }
-        else if (key_held(KEY_LEFT)) { playerX -= (1 * playerMoveSpeed); }
-        
-        // Update Y position
-        if (key_held(KEY_UP)) { playerY -= (1 * playerMoveSpeed); }
-        else if (key_held(KEY_DOWN)) { playerY += (1 * playerMoveSpeed); }
+        MovePlayer(player);
 
-        // clamp the positions before applying to object
-        if (playerX > 240) playerX = -playerSize;
-        else if (playerX < -playerSize) playerX = 240;
-
-        if (playerY > 160) playerY = -playerSize;
-        else if (playerY < -playerSize) playerY = 160;
-
-        // Update the players Y and X with attr0 and attr1, respectively
-        player->attr0 = (player->attr0 & ~YPOS_MASK) | (playerY & YPOS_MASK);
-        player->attr1 = (player->attr1 & ~XPOS_MASK) | (playerX & XPOS_MASK);
-    
         // Copy to OAM
         oam_copy(oam_mem, obj_buffer, 1);
     }
 
     return 0;
 }
+
+void CopySpriteData()
+{
+    // normal ground
+    memcpy(&tile_mem[4][GROUND * 4], groundTiles, groundTilesLen);
+    memcpy(obj_pal_mem, groundPal, groundPalLen);
+
+    // walls
+    memcpy(&tile_mem[4][WALL * 4], wallStandardTiles, wallStandardTilesLen);
+    // memcpy(obj_pal_mem[7], groundPal, groundPalLen);
+
+    // player
+    memcpy(&tile_mem[4][PLAYER * 4], playerTiles, playerTilesLen);
+
+    // door
+    memcpy(&tile_mem[4][DOOR * 4], doorTiles, doorTilesLen);
+}
+
+

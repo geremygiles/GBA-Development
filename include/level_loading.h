@@ -8,10 +8,6 @@ Geremy Giles
 #define LEVEL_LOADING_H
 
 #include "tile_rendering.h"
-
-// Tile size
-#define TILE_SIZE 16
-
 // Tile types
 #define EMPTY_TILE  0
 #define BRKEN_GRND  1
@@ -24,6 +20,9 @@ Geremy Giles
 #define PLAYER      8
 #define DOOR        9
 #define LINE_DELIM  15
+
+// Current level
+extern unsigned int currentLevel[20];
 
 // Load a level into RAM
 void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player);

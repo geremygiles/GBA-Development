@@ -60,6 +60,9 @@ typedef short s16;
 #define SCREEN_WIDTH 240
 #define SCREEN_HEIGHT 160
 
+// Define the tile size for each object in the game
+#define TILE_SIZE 16
+
 /// VSYNC
 
 // Avoids any tearing by waiting until the GBA is rendering in the VBlank.
@@ -118,6 +121,25 @@ inline u32 key_down(u32 keyMask)
 inline u32 key_held(u32 keyMask)
 {
     return __key_curr & keyMask;
+}
+
+// Tribool interface
+inline int bit_tribool(u32 keyState, int posSide, int negSide)
+{
+    // Subtract the negative side from the positive side to get the greater value
+    return ((keyState >> posSide) & 1) - ((keyState >> negSide) & 1);
+}
+
+// Tribool for left and right movement
+inline int tri_bool_horz() 
+{
+    return bit_tribool(__key_curr, KI_RIGHT, KI_LEFT);
+}
+
+// Tribool for up and down movement
+inline int tri_bool_vert() 
+{
+    return bit_tribool(__key_curr, KI_UP, KI_DOWN);
 }
 
 
