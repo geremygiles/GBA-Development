@@ -75,7 +75,8 @@ int main()
     // Load the first level
     LoadLevel(level0, obj_buffer, player);
 
-    GetPlayerStartPos(player);
+    GetPlayerRef(player);
+    GetPlayerStartPos();
 
     // Copy buffer to OAM
     oam_copy(oam_mem, obj_buffer, 128);
@@ -91,7 +92,7 @@ int main()
 
         // if (key_down(KEY_A)) { player->attr0 = ATTR0_HIDE; }
 
-        MovePlayer(player);
+        MovePlayer(obj_buffer);
 
         // Copy to OAM
         oam_copy(oam_mem, obj_buffer, 1);

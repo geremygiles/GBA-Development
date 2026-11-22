@@ -28,6 +28,6 @@ extern unsigned int currentLevel[20];
 void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player);
 
 // Create tiles for the specified data
-u16 CreateTiles(u32 data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player);
+u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, int wordIndex);
 
 #endif

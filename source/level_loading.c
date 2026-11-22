@@ -8,24 +8,34 @@ Geremy Giles
 
 #include "toolkit.h"
 #include "tile_rendering.h"
+#include "player_movement.h"
 #include <stdint.h>
 #include <string.h>
 
 // Current tile X and Y coordinates
 int tileX = 0, tileY = 0;
 
-u16 CreateTiles(u32 data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player) 
+u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, int wordIndex) 
 {
     u16 tilesProcessed = 0;
 
     for (int offset = 28; offset >= 0; offset -= 4)
     {
-        uint8_t tileData = (data >> offset) & 0xF; // extract current tile data
+        uint8_t tileData = (*data >> offset) & 0xF; // extract current tile data
         
         if (tileData == PLAYER) 
         {
+            // Replace the player's tile with a standard ground tile
+            *data = (GROUND << offset) | (*data & ~(0xF << offset)); 
+
             // Create player then proceed with regular ground tile
             *player = buffer[startIndex + tilesProcessed];
+
+            // Store this index for player movement
+            playerTileIndex = startIndex + tilesProcessed;
+
+            xTileIndex = offset;
+            yTileIndex = wordIndex;
 
             // Set tile ID and palette ID
             u32 tileID = tileData * 4; // 4 tiles per obj
@@ -96,7 +106,7 @@ void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *play
     u16 index = 1; // offset to avoid overwriting files
     for (int ii = 0; ii < 20; ii++) 
     {
-        index += CreateTiles(currentLevel[ii], buffer, index, player);
+        index += CreateTiles(&currentLevel[ii], buffer, index, player, ii);
     }    
 }
 
