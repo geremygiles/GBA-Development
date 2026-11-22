@@ -9,10 +9,26 @@ Geremy Giles
 
 #include "tile_rendering.h"
 
+// Tile size
+#define TILE_SIZE 16
+
+// Tile types
+#define EMPTY_TILE  0
+#define BRKEN_GRND  1
+#define FRCTR_GRND  2
+#define GROUND      3
+#define DSTRCT_WALL 4
+#define BOMB        5
+#define KEY         6
+#define WALL        7
+#define PLAYER      8
+#define DOOR        9
+#define LINE_DELIM  15
+
 // Load a level into RAM
-void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer);
+void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player);
 
 // Create tiles for the specified data
-void CreateTiles(u32 data, OBJ_ATTR *buffer, u16 startIndex);
+u16 CreateTiles(u32 data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player);
 
 #endif

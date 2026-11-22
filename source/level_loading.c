@@ -4,6 +4,8 @@ Geremy Giles
 11/21/2026
 */
 
+#include "level_loading.h"
+
 #include "toolkit.h"
 #include "tile_rendering.h"
 #include <stdint.h>
@@ -12,97 +14,89 @@ Geremy Giles
 // Current tile X and Y coordinates
 int tileX = 0, tileY = 0;
 
-void CreateTiles(u32 data, OBJ_ATTR *buffer, u16 startIndex) 
+u16 CreateTiles(u32 data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player) 
 {
-    u16 offset = 28;
     u16 tilesProcessed = 0;
 
-    while (offset > 0) 
+    for (int offset = 28; offset >= 0; offset -= 4)
     {
         uint8_t tileData = (data >> offset) & 0xF; // extract current tile data
         
-        if (tileData > 0 && tileData < 15) 
+        if (tileData == PLAYER) 
+        {
+            // Create player then proceed with regular ground tile
+            *player = buffer[startIndex + tilesProcessed];
+
+            // Set tile ID and palette ID
+            u32 tileID = tileData * 4; // 4 tiles per obj
+            u32 paletteID = 0;
+            
+            // Set Attribute 0: Y-coord, gfx, and shape
+            player->attr0 = ATTR0_SQUARE;
+            player->attr0 = (player->attr0 & ~YPOS_MASK) | (tileY & YPOS_MASK); 
+
+            // Set Attribute 1: X-coord, size, and flipping
+            player->attr1 = ATTR1_SIZE_16; 
+            player->attr1 = (player->attr1 & ~XPOS_MASK) | (tileX & XPOS_MASK);
+
+            player->attr2 = (tileID | paletteID); // Set attribute 2: Tile ID, Z Order, and color palette
+            
+            tilesProcessed++;
+            tileData = GROUND;
+        }
+
+        if (tileData > EMPTY_TILE && tileData < LINE_DELIM) 
         { // Create the proper tile if 0 < tileData < 15
+
+            // Protect against overflow
+            if (startIndex + tilesProcessed >= 128) break;
+
             OBJ_ATTR *tileObj = &buffer[startIndex + tilesProcessed];
 
             // Set tile ID and palette ID
-            u32 tileID = tileData, paletteID = 0;
+            u32 tileID = tileData * 4; // 4 tiles per obj
+            u32 paletteID = 0;
+            
+            // Set Attribute 0: Y-coord, gfx, and shape
+            tileObj->attr0 = ATTR0_SQUARE;
+            tileObj->attr0 = (tileObj->attr0 & ~YPOS_MASK) | (tileY & YPOS_MASK); 
 
-            tileObj->attr0 = ATTR0_SQUARE; // Set Attribute 0: Y-coord, gfx, and shape
-            tileObj->attr1 = ATTR1_SIZE_16; // Set Attribute 1: X-coord, size, and flipping
+            // Set Attribute 1: X-coord, size, and flipping
+            tileObj->attr1 = ATTR1_SIZE_16; 
+            tileObj->attr1 = (tileObj->attr1 & ~XPOS_MASK) | (tileX & XPOS_MASK);
+
             tileObj->attr2 = (tileID | paletteID); // Set attribute 2: Tile ID, Z Order, and color palette
         
-            tileX += 8; // move to the next 
+            tilesProcessed++; // count tiles processed
+            tileX += TILE_SIZE;
         }
-        else if (tileData == 15) 
+        else if (tileData == LINE_DELIM) 
         { // line delimeter, advance to the next line and reset x
-            tileY += 8;
+            tileY += TILE_SIZE;
             tileX = 0;
         }
-        else tileX += 8;
-
-        tilesProcessed += 1; // advance to the next tile
-        offset -= 4;
-        
-
-        
-
-        
-        // switch (tileData) 
-        // {
-        //     case 0: // no tile, increase tile pos & do nothing
-        //         tileX += 8;
-        //         break;
-        //     case 1: // broken tile
-
-        //         break;
-        //     case 2: // fractured ground
-
-        //         break;
-        //     case 3: // normal ground
-        //         OBJ_ATTR *tileObj = &buffer[startIndex + tilesProcessed];
-
-        //         // Set tile ID and palette ID
-        //         u32 tileID = 3, paletteID = 0;
-
-        //         tileObj->attr0 = ATTR0_SQUARE; // Set Attribute 0: Y-coord, gfx, and shape
-        //         tileObj->attr1 = ATTR1_SIZE_16; // Set Attribute 1: X-coord, size, and flipping
-        //         tileObj->attr2 = (tileID | paletteID); // Set attribute 2: Tile ID, Z Order, and color palette
-        //         break;
-        //     case 4: // destructable wall
-
-        //         break;
-        //     case 5: // normal ground w/ tile
-
-        //         break;
-        //     case 6: // normal ground w/ key
-
-        //         break;
-        //     case 7: // wall
-
-        //         break;
-        //     case 8: // normal ground w/ player
-
-        //         break;
-        //     case 9: // door
-
-        //         break;
-        //     case 15: // line delimiter, start next line
-
-        // }
+        else
+        { // empty tile, move to next tile pos
+            tileX += TILE_SIZE;
+        }
     }
+
+    return tilesProcessed;
 }
 
 
 unsigned int currentLevel[20] __attribute__((aligned(4))) = {0};
 
-void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer) 
+void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player) 
 {
     memcpy(currentLevel, levelToLoad, sizeof(currentLevel));
 
+    tileX = 0, tileY = 0;
+
+    u16 index = 1; // offset to avoid overwriting files
     for (int ii = 0; ii < 20; ii++) 
     {
-        CreateTiles(currentLevel[ii], buffer, ii);
+        index += CreateTiles(currentLevel[ii], buffer, index, player);
     }    
 }
 
