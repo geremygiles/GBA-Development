@@ -51,10 +51,10 @@ void MovePlayer(OBJ_ATTR *buffer)
 
     // Apply to postion
     playerX += deltaX; 
-    playerY -= deltaY; 
+    playerY += deltaY; 
 
     xTicker += deltaX;
-    yTicker -= deltaY; 
+    yTicker += deltaY; 
 
     // Check tickers for tile updates
     if (xTicker > 15)
@@ -153,10 +153,5 @@ void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer)
     if (desiredPlayerTile == WALL || desiredPlayerTile == DSTRCT_WALL)
     { // Yes, change delta to 0
         *deltaY = 0;
-    }
-
-    if (desiredPlayerTile == GROUND)
-    {
-        *deltaX = 2;
     }
 }

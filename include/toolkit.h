@@ -139,7 +139,7 @@ inline int tri_bool_horz()
 // Tribool for up and down movement
 inline int tri_bool_vert() 
 {
-    return bit_tribool(__key_curr, KI_UP, KI_DOWN);
+    return bit_tribool(__key_curr, KI_DOWN, KI_UP);
 }
 
 
