@@ -24,42 +24,15 @@ u32 __key_curr, __key_prev = 0;
 // Create the double buffer for the OAM
 OBJ_ATTR obj_buffer[128];
 
+// Current level index
+int levelIndex = 0;
+
 int main()
 {
     // Set the display to Mode 0 for simple tiles, with background 0
     //REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
     // Enable objects and set the mapping mode to 1D 
     REG_DISPCNT = DCNT_OBJ | DCNT_1D;
-
-    #pragma region Smiley Face
-
-    // // Copy the sprite into the tile memory
-    // memcpy(&tile_mem[4][0], smiley16Tiles, smiley16TilesLen);
-
-    // // Copy the palette into the palbank
-    // memcpy(obj_pal_mem, smiley16Pal, smiley16PalLen);
-
-    // // Initialize all sprites
-    // oam_init(obj_buffer, 128);
-
-    // // Create an OBJ_ATTR for my sprite
-    // OBJ_ATTR *myObj = &obj_buffer[0];
-
-    // // Set tile ID and palette ID
-    // u32 tileID = 0, paletteID = 0;
-
-    // // Set the starting position for the sprite
-    // int playerX = 0, playerY = 0;
-
-    
-    // myObj->attr0 = ATTR0_SQUARE; // Set Attribute 0: Y-coord, gfx, and shape
-    // myObj->attr1 = ATTR1_SIZE_16; // Set Attribute 1: X-coord, size, and flipping
-    // myObj->attr2 = (tileID | paletteID); // Set attribute 2: Tile ID, Z Order, and color palette
-
-    // // Copy everything to OAM, so that all objects are initialized to hide
-    // oam_copy(oam_mem, obj_buffer, 128);
-
-    #pragma endregion
 
     #pragma region Level Loading
 
@@ -73,7 +46,7 @@ int main()
     OBJ_ATTR *player = &obj_buffer[0];
     
     // Load the first level
-    LoadLevel(level0, obj_buffer, player);
+    LoadLevel(levels[levelIndex], obj_buffer, player);
 
     GetPlayerRef(player);
     GetPlayerStartPos();
@@ -95,7 +68,7 @@ int main()
         MovePlayer(obj_buffer);
 
         // Copy to OAM
-        oam_copy(oam_mem, obj_buffer, 1);
+        oam_copy(oam_mem, obj_buffer, 128);
     }
 
     return 0;

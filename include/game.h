@@ -2,6 +2,8 @@
 
 #define GAME_H
 
+extern int levelIndex;
+
 void CopySpriteData();
 
 

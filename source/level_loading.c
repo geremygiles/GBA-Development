@@ -31,9 +31,7 @@ u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, i
             // Create player then proceed with regular ground tile
             *player = buffer[startIndex + tilesProcessed];
 
-            // Store this index for player movement
-            playerTileIndex = startIndex + tilesProcessed;
-
+            // Store these indices for player movement
             xTileIndex = offset;
             yTileIndex = wordIndex;
 
@@ -99,6 +97,8 @@ unsigned int currentLevel[20] __attribute__((aligned(4))) = {0};
 
 void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player) 
 {
+
+
     memcpy(currentLevel, levelToLoad, sizeof(currentLevel));
 
     tileX = 0, tileY = 0;

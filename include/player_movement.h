@@ -6,8 +6,6 @@
 // Local player reference
 extern OBJ_ATTR *player;
 
-extern int playerTileIndex;
-
 extern int xTileIndex;
 extern int yTileIndex;
 
