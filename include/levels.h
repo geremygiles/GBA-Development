@@ -7,6 +7,7 @@ Rev 11/21/2026
 typedef unsigned int LEVEL;
 
 // List of all levels in order
+extern const int levelCount;
 extern const LEVEL* levels[2];
 
 extern const LEVEL level0[20];

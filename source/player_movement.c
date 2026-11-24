@@ -6,9 +6,6 @@
 #include "game.h"
 #include "levels.h"
 
-// Player reference 
-OBJ_ATTR *player;
-
 // Player speed 
 const u32 playerMoveSpeed = 1;
 
@@ -23,12 +20,6 @@ int yTileIndex = 0;
 // Tickers to increment tile
 int xTicker = 8;
 int yTicker = 8;
-
-void GetPlayerRef(OBJ_ATTR *playerRef) 
-{
-    // Player object reference
-    player = playerRef;
-}
 
 void GetPlayerStartPos() 
 {
@@ -47,7 +38,7 @@ static inline int IsDoor(int yIndex, int xIndex)
     return (tile == DOOR);
 }
 
-void MovePlayer(OBJ_ATTR *buffer) 
+void MovePlayer() 
 {
     // Create vector of intended movement
     int deltaX = 0; int deltaY = 0;
@@ -57,7 +48,7 @@ void MovePlayer(OBJ_ATTR *buffer)
     deltaY = tri_bool_vert() * playerMoveSpeed;
 
     // Check the intended movement against the tiles in that area
-    CheckCollision(&deltaX, &deltaY, buffer);
+    CheckCollision(&deltaX, &deltaY);
 
     // Apply to postion
     playerX += deltaX; 
@@ -115,13 +106,7 @@ void MovePlayer(OBJ_ATTR *buffer)
     // Check if the player has reached the door
     if (IsDoor(yTileIndex, xTileIndex)) 
     {
-        levelIndex++;
-
-        // Load the first level
-        LoadLevel(levels[levelIndex], buffer, player);
-
-        GetPlayerRef(player);
-        GetPlayerStartPos();
+        LoadNextLevel();
     }
     
 }
@@ -133,7 +118,7 @@ static inline int IsWall(int yIndex, int xIndex)
     return (tile == WALL || tile == DSTRCT_WALL);
 }
 
-void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer) 
+void CheckCollision(int *deltaX, int *deltaY) 
 {
     int originalDeltaX = *deltaX;
     int originalDeltaY = *deltaY;
@@ -146,8 +131,7 @@ void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer)
         {
             *deltaX = 0;
         }
-        else
-        // if (originalDeltaY == 0) // Only corner-nudge if player isn't already pressing Up/Down
+        else if (originalDeltaY == 0) // Only corner-nudge if player isn't already pressing Up/Down
         {
             if (IsWall(yTileIndex - 2, targetXShift) && yTicker < 8)
             {
@@ -166,8 +150,7 @@ void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer)
         {
             *deltaX = 0;
         }
-        else
-        // if (originalDeltaY == 0)
+        else if (originalDeltaY == 0)
         {
             if (IsWall(yTileIndex - 2, targetXShift) && yTicker < 8)
             {
@@ -195,8 +178,7 @@ void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer)
         {
             *deltaY = 0;
         }
-        else 
-        //if (originalDeltaX == 0) // Only corner-nudge if player isn't already pressing Left/Right
+        else if (originalDeltaX == 0) // Only corner-nudge if player isn't already pressing Left/Right
         {
             if (IsWall(targetYIdx, xTileIndex + 4) && xTicker < 8)
             {
@@ -215,8 +197,7 @@ void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer)
         {
             *deltaY = 0;
         }
-        else
-        // if (originalDeltaX == 0)
+        else if (originalDeltaX == 0)
         {
             if (IsWall(targetYIdx, xTileIndex + 4) && xTicker < 8)
             {

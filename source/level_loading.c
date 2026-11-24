@@ -5,7 +5,7 @@ Geremy Giles
 */
 
 #include "level_loading.h"
-
+#include "game.h"
 #include "toolkit.h"
 #include "tile_rendering.h"
 #include "player_movement.h"
@@ -15,7 +15,7 @@ Geremy Giles
 // Current tile X and Y coordinates
 int tileX = 0, tileY = 0;
 
-u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, int wordIndex) 
+u16 CreateTiles(u32 *data, u16 startIndex, int wordIndex) 
 {
     u16 tilesProcessed = 0;
 
@@ -29,7 +29,7 @@ u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, i
             *data = (GROUND << offset) | (*data & ~(0xF << offset)); 
 
             // Create player then proceed with regular ground tile
-            *player = buffer[startIndex + tilesProcessed];
+            *player = obj_buffer[startIndex + tilesProcessed];
 
             // Store these indices for player movement
             xTileIndex = offset;
@@ -59,7 +59,9 @@ u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, i
             // Protect against overflow
             if (startIndex + tilesProcessed >= 128) break;
 
-            OBJ_ATTR *tileObj = &buffer[startIndex + tilesProcessed];
+            OBJ_ATTR *tileObj = &obj_buffer[startIndex + tilesProcessed];
+
+            objCount = startIndex + tilesProcessed;
 
             // Set tile ID and palette ID
             u32 tileID = tileData * 4; // 4 tiles per obj
@@ -95,7 +97,7 @@ u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, i
 
 unsigned int currentLevel[20] __attribute__((aligned(4))) = {0};
 
-void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player) 
+void LoadLevel(const unsigned int *levelToLoad) 
 {
 
 
@@ -106,7 +108,7 @@ void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *play
     u16 index = 1; // offset to avoid overwriting files
     for (int ii = 0; ii < 20; ii++) 
     {
-        index += CreateTiles(&currentLevel[ii], buffer, index, player, ii);
+        index += CreateTiles(&currentLevel[ii], index, ii);
     }    
 }
 

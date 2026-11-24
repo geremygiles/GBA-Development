@@ -34,4 +34,5 @@ const LEVEL level1[20] __attribute__((aligned(4))) =
     0xF0000000,0x00000000,
 };
 
+const int levelCount = 2;
 const LEVEL * levels[2] =  { level0, level1 };

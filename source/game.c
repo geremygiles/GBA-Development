@@ -24,8 +24,14 @@ u32 __key_curr, __key_prev = 0;
 // Create the double buffer for the OAM
 OBJ_ATTR obj_buffer[128];
 
+// Player reference
+OBJ_ATTR *player = &obj_buffer[0];
+
 // Current level index
-int levelIndex = 0;
+int levelIndex = -1;
+
+// Objects in game
+int objCount = 0;
 
 int main()
 {
@@ -42,14 +48,8 @@ int main()
     // Initialize all sprites
     oam_init(obj_buffer, 128);
 
-    // temp definition, will be overwritten in LoadLevel
-    OBJ_ATTR *player = &obj_buffer[0];
-    
-    // Load the first level
-    LoadLevel(levels[levelIndex], obj_buffer, player);
-
-    GetPlayerRef(player);
-    GetPlayerStartPos();
+    // Load first level
+    LoadNextLevel();
 
     // Copy buffer to OAM
     oam_copy(oam_mem, obj_buffer, 128);
@@ -65,13 +65,33 @@ int main()
 
         // if (key_down(KEY_A)) { player->attr0 = ATTR0_HIDE; }
 
-        MovePlayer(obj_buffer);
+        MovePlayer();
 
         // Copy to OAM
         oam_copy(oam_mem, obj_buffer, 128);
     }
 
     return 0;
+}
+
+void LoadNextLevel()
+{
+    levelIndex++;
+
+    // Avoid loading nonexistent levels
+    if (levelIndex < levelCount)
+    {
+        // Load the level
+        LoadLevel(levels[levelIndex]);
+
+        GetPlayerStartPos();
+    }
+    else 
+    {
+        // Hide all sprites
+        oam_init(obj_buffer, 128);
+    }
+    
 }
 
 void CopySpriteData()

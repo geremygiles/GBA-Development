@@ -25,9 +25,9 @@ Geremy Giles
 extern unsigned int currentLevel[20];
 
 // Load a level into RAM
-void LoadLevel(const unsigned int *levelToLoad, OBJ_ATTR *buffer, OBJ_ATTR *player);
+void LoadLevel(const unsigned int *levelToLoad);
 
 // Create tiles for the specified data
-u16 CreateTiles(u32 *data, OBJ_ATTR *buffer, u16 startIndex, OBJ_ATTR *player, int wordIndex);
+u16 CreateTiles(u32 *data, u16 startIndex, int wordIndex);
 
 #endif
