@@ -104,54 +104,109 @@ void MovePlayer(OBJ_ATTR *buffer)
     
 }
 
+// Check if a tile at a given row and bit-offset is a wall
+static inline int IsWall(int yIndex, int xBitShift)
+{
+    int tile = (currentLevel[yIndex] >> xBitShift) & 0xF;
+    return (tile == WALL || tile == DSTRCT_WALL);
+}
+
 void CheckCollision(int *deltaX, int *deltaY, OBJ_ATTR *buffer) 
 {
-    int desiredPlayerTile = 0;
-    //int horzTileChange = 0;
-    //int vertTileChange = 0;
+    int originalDeltaX = *deltaX;
+    int originalDeltaY = *deltaY;
 
-    // Delta X
-    // Evaluate desired change
-    if ((xTicker + *deltaX + 7) > 15) 
-    { // move to tile right
-        //horzTileChange = -4;
-        desiredPlayerTile = (currentLevel[yTileIndex] >> (xTileIndex - 4)) & 0xF;
+    // --- HORIZONTAL MOVEMENT (DELTA X) ---
+    if ((xTicker + originalDeltaX + 7) > 15) 
+    { // Moving into tile right
+        int targetXShift = xTileIndex - 4;
+        if (IsWall(yTileIndex, targetXShift))
+        {
+            *deltaX = 0;
+        }
+        else if (originalDeltaY == 0) // Only corner-nudge if player isn't already pressing Up/Down
+        {
+            if (IsWall(yTileIndex - 2, targetXShift) && yTicker < 8)
+            {
+                *deltaY += playerMoveSpeed;
+            }
+            else if (IsWall(yTileIndex + 2, targetXShift) && yTicker > 8)
+            {
+                *deltaY -= playerMoveSpeed;
+            }
+        }
     }
-    else if ((xTicker + *deltaX - 8) < 0)
-    { // move to tile left
-        //horzTileChange = 4;
-        desiredPlayerTile = (currentLevel[yTileIndex] >> (xTileIndex + 4)) & 0xF;
-    }
-    else 
-    { // stay in current tile
-        desiredPlayerTile = (currentLevel[yTileIndex] >> xTileIndex) & 0xF;
-    }
-
-    // Does that tile contain a wall?
-    if (desiredPlayerTile == WALL || desiredPlayerTile == DSTRCT_WALL)
-    { // Yes, change delta to 0
-        *deltaX = 0;
-    }
-    
-    // Delta Y, same
-    if ((yTicker + *deltaY + 7) > 15)
-    { // move to tile down
-        //vertTileChange = 2;
-        desiredPlayerTile = (currentLevel[yTileIndex + 2] >> xTileIndex) & 0xF;
-    }
-    else if ((yTicker + *deltaY - 8) < 0)
-    { // move to tile up
-        //vertTileChange = -2;
-        desiredPlayerTile = (currentLevel[yTileIndex - 2] >> xTileIndex) & 0xF;
+    else if ((xTicker + originalDeltaX - 8) < 0)
+    { // Moving into tile left
+        int targetXShift = xTileIndex + 4;
+        if (IsWall(yTileIndex, targetXShift))
+        {
+            *deltaX = 0;
+        }
+        else if (originalDeltaY == 0)
+        {
+            if (IsWall(yTileIndex - 2, targetXShift) && yTicker < 8)
+            {
+                *deltaY += playerMoveSpeed;
+            }
+            else if (IsWall(yTileIndex + 2, targetXShift) && yTicker > 8)
+            {
+                *deltaY -= playerMoveSpeed;
+            }
+        }
     }
     else
-    { // stay in current tile
-        desiredPlayerTile = (currentLevel[yTileIndex] >> xTileIndex) & 0xF;
+    { // Staying in current horizontal tile
+        if (IsWall(yTileIndex, xTileIndex))
+        {
+            *deltaX = 0;
+        }
     }
 
-    // Does that tile contain a wall?
-    if (desiredPlayerTile == WALL || desiredPlayerTile == DSTRCT_WALL)
-    { // Yes, change delta to 0
-        *deltaY = 0;
+    // --- VERTICAL MOVEMENT (DELTA Y) ---
+    if ((yTicker + originalDeltaY + 7) > 15)
+    { // Moving into tile down
+        int targetYIdx = yTileIndex + 2;
+        if (IsWall(targetYIdx, xTileIndex))
+        {
+            *deltaY = 0;
+        }
+        else if (originalDeltaX == 0) // Only corner-nudge if player isn't already pressing Left/Right
+        {
+            if (IsWall(targetYIdx, xTileIndex + 4) && xTicker < 8)
+            {
+                *deltaX += playerMoveSpeed;
+            }
+            else if (IsWall(targetYIdx, xTileIndex - 4) && xTicker > 8)
+            {
+                *deltaX -= playerMoveSpeed;
+            }
+        }
+    }
+    else if ((yTicker + originalDeltaY - 8) < 0)
+    { // Moving into tile up
+        int targetYIdx = yTileIndex - 2;
+        if (IsWall(targetYIdx, xTileIndex))
+        {
+            *deltaY = 0;
+        }
+        else if (originalDeltaX == 0)
+        {
+            if (IsWall(targetYIdx, xTileIndex + 4) && xTicker < 8)
+            {
+                *deltaX += playerMoveSpeed;
+            }
+            else if (IsWall(targetYIdx, xTileIndex - 4) && xTicker > 8)
+            {
+                *deltaX -= playerMoveSpeed;
+            }
+        }
+    }
+    else
+    { // Staying in current vertical tile
+        if (IsWall(yTileIndex, xTileIndex))
+        {
+            *deltaY = 0;
+        }
     }
 }
